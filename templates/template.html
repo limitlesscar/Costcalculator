@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hospital Cost Calculator - Modern/Classic</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* Classic Business Plan Style */
+body.classic {
+    font-family: "Times New Roman", Times, serif;
+    background-color: #ffffff;
+    color: #000000;
+}
+.classic table, .classic th, .classic td {
+    border: 1px solid black !important;
+}
+.classic th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+.classic td {
+    font-size: 12px;
+}
+.classic input {
+    font-family: "Times New Roman", Times, serif;
+    border: 1px solid black !important;
+    padding: 2px 4px;
+    font-size: 12px;
+}
+
+/* Modern Excel-like Style */
+body.modern {
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    background-color: #f3f4f6;
+    color: #111827;
+}
+.modern table {
+    border-collapse: collapse;
+    width: 100%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.modern th, .modern td {
+    border: 1px solid #d1d5db;
+    padding: 6px 8px;
+}
+.modern th {
+    background: linear-gradient(to bottom, #4f46e5, #6366f1);
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+}
+.modern td {
+    background-color: #ffffff;
+}
+.modern td input {
+    border: 1px solid #d1d5db;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+.modern td input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 5px rgba(79,70,229,0.5);
+}
+.modern tr:hover td {
+    background-color: #eef2ff;
+}
+</style>
+</head>
+<body class="classic p-8">
+
+<h1 class="text-3xl font-bold mb-6 text-center">Complete Hospital Cost Calculator</h1>
+
+<div class="max-w-6xl mx-auto p-6 overflow-x-auto">
+    <button id="toggleStyle" class="px-4 py-2 mb-4 bg-indigo-600 text-white rounded hover:bg-indigo-700">Switch to Modern</button>
+
+    <!-- Employee Table -->
+    <table class="table-auto w-full border-collapse text-sm mb-6">
+        <thead>
+            <tr>
+                <th>Employee Type</th>
+                <th>Number of Employees</th>
+                <th>Salary per Month ($)</th>
+                <th>Cost per Minute ($)</th>
+                <th>Total Cost ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Doctors</td>
+                <td><input type="number" class="num-input" value="0"></td>
+                <td><input type="number" class="salary-input" value="0"></td>
+                <td class="cost-per-minute">$0.00</td>
+                <td class="total">$0.00</td>
+            </tr>
+            <tr>
+                <td>Nurses</td>
+                <td><input type="number" class="num-input" value="0"></td>
+                <td><input type="number" class="salary-input" value="0"></td>
+                <td class="cost-per-minute">$0.00</td>
+                <td class="total">$0.00</td>
+            </tr>
+            <tr>
+                <td>Technicians</td>
+                <td><input type="number" class="num-input" value="0"></td>
+                <td><input type="number" class="salary-input" value="0"></td>
+                <td class="cost-per-minute">$0.00</td>
+                <td class="total">$0.00</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="text-right font-bold">Employee Total:</td>
+                <td class="font-bold" id="employeeTotal">$0.00</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- Surgery Costs -->
+    <h2 class="text-xl font-bold mb-2">Surgery Costs</h2>
+    <table class="table-auto w-full border-collapse text-sm mb-6">
+        <thead>
+            <tr>
+                <th>Surgery Name</th>
+                <th>Duration (Minutes)</th>
+                <th>Room Cost per Hour ($)</th>
+                <th>Equipment Cost ($)</th>
+                <th>Anesthesia ($)</th>
+                <th>Consumables ($)</th>
+                <th>Total Surgery Cost ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" placeholder="Surgery Name"></td>
+                <td><input type="number" class="surgery-duration" value="0"></td>
+                <td><input type="number" class="room-cost" value="0"></td>
+                <td><input type="number" class="equipment-cost" value="0"></td>
+                <td><input type="number" class="anesthesia-cost" value="0"></td>
+                <td><input type="number" class="consumables-cost" value="0"></td>
+                <td class="surgery-total">$0.00</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Utilities -->
+    <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+            <label class="block font-bold mb-1">Electricity Bill ($)</label>
+            <input type="number" id="electricityBill" value="0">
+        </div>
+        <div>
+            <label class="block font-bold mb-1">Water Bill ($)</label>
+            <input type="number" id="waterBill" value="0">
+        </div>
+    </div>
+
+    <!-- Grand Total -->
+    <div class="text-right text-xl font-bold">
+        Grand Total (Employees + Surgery + Utilities): $<span id="grandTotal">$0.00</span>
+    </div>
+</div>
+
+<script>
+const body = document.body;
+const toggleBtn = document.getElementById('toggleStyle');
+let isModern = false;
+
+toggleBtn.addEventListener('click', () => {
+    isModern = !isModern;
+    body.className = isModern ? 'modern p-8' : 'classic p-8';
+    toggleBtn.textContent = isModern ? 'Switch to Classic' : 'Switch to Modern';
+});
+
+// Calculation functions
+function calculateEmployeeCosts() {
+    const rows = document.querySelectorAll('tbody tr');
+    let employeeTotal = 0;
+    rows.forEach(row => {
+        const num = parseFloat(row.querySelector('.num-input')?.value || 0);
+        const salary = parseFloat(row.querySelector('.salary-input')?.value || 0);
+        const costPerMinute = salary / (30*8*60);
+        if(row.querySelector('.cost-per-minute')) row.querySelector('.cost-per-minute').textContent = '$' + costPerMinute.toFixed(2);
+        const total = num * salary;
+        if(row.querySelector('.total')) row.querySelector('.total').textContent = '$' + total.toFixed(2);
+        employeeTotal += total;
+    });
+    document.getElementById('employeeTotal').textContent = '$' + employeeTotal.toFixed(2);
+    return employeeTotal;
+}
+
+function calculateSurgeryCosts() {
+    let surgeryTotal = 0;
+    const row = document.querySelector('tbody tr input.surgery-duration')?.closest('tr');
+    if(row) {
+        const duration = parseFloat(row.querySelector('.surgery-duration').value) || 0;
+        const roomCost = parseFloat(row.querySelector('.room-cost').value) || 0;
+        const equipmentCost = parseFloat(row.querySelector('.equipment-cost').value) || 0;
+        const anesthesiaCost = parseFloat(row.querySelector('.anesthesia-cost').value) || 0;
+        const consumablesCost = parseFloat(row.querySelector('.consumables-cost').value) || 0;
+        const roomCostMinutes = roomCost * (duration/60);
+        const total = roomCostMinutes + equipmentCost + anesthesiaCost + consumablesCost;
+        row.querySelector('.surgery-total').textContent = '$' + total.toFixed(2);
+        surgeryTotal += total;
+    }
+    return surgeryTotal;
+}
+
+function calculateGrandTotal() {
+    const employeeTotal = calculateEmployeeCosts();
+    const surgeryTotal = calculateSurgeryCosts();
+    const electricity = parseFloat(document.getElementById('electricityBill').value) || 0;
+    const water = parseFloat(document.getElementById('waterBill').value) || 0;
+    const grandTotal = employeeTotal + surgeryTotal + electricity + water;
+    document.getElementById('grandTotal').textContent = '$' + grandTotal.toFixed(2);
+}
+
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', calculateGrandTotal);
+});
+
+calculateGrandTotal();
+</script>
+
+</body>
+</html>

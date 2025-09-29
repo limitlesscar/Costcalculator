@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hospital Cost Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  
+</head>
+<body class="h-screen w-screen flex justify-center items-center bg-[#008080] font-sans">
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="flex flex-col items-center bg-[#008080] p-10 text-center absolute inset-0 justify-center z-50">
+        <img src="{{ url_for('static', filename='logo/logo.jpg') }}" alt="Instituto Performa Logo" class="w-24 h-auto mb-4 border-2 border-black rounded">
+        <h2 class="text-xl font-bold mb-2 text-white">Instituto Performa</h2>
+        <p class="mb-4 text-white">Loading...</p>
+        <div class="w-72 h-5 bg-white border-2 border-black relative">
+            <div id="progress" class="h-full bg-blue-900 w-0 transition-width duration-300"></div>
+        </div>
+    </div>
+
+
+
+
+
+    
+ 
+
+ <!-- Main Content Form -->
+<form id="optionForm" action="{{ url_for('choose') }}" method="POST" class="hidden flex flex-col justify-center items-center w-full h-full bg-white text-black text-center p-10 rounded shadow-lg ">
+
+
+<!-- Header -->
+<header terms.html class="fixed top-0 left-0 w-full bg-white shadow-md z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- Logo -->
+            <div class="flex-shrink-0 flex items-center">
+                <img class="h-10 w-auto" src="{{ url_for('static', filename='logo/logo.jpg') }}" alt="Instituto Performa Logo">
+                <span class="ml-2 font-bold text-gray-900 text-lg">Instituto Performa</span>
+            </div>
+
+            <!-- Links (Large screens only) -->
+            <nav class="hidden lg:flex space-x-6 items-center">
+    <a href="{{ url_for('terms') }}" class="text-gray-700 hover:text-indigo-600 transition-colors duration-200">Terms and privacy</a>
+    <a href="{{ url_for('privacy') }}" class="text-gray-700 hover:text-indigo-600 transition-colors duration-200">Privacy and data protection</a>
+    <a href="{{ url_for('help') }}" class="text-gray-700 hover:text-indigo-600 transition-colors duration-200">Help and support</a>
+</nav>
+        </div>
+    </div>
+</header>
+
+
+
+    <h1 class="text-2xl font-bold mb-6">Choose an Option</h1>
+    <fieldset class="w-full max-w-3xl">
+        <legend class="text-lg font-semibold mb-4">Select an option</legend>
+        <div class="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6">
+            <!-- Connect to Database -->
+            <label id="label-db" class="relative flex rounded-lg border border-gray-300 bg-white p-4 cursor-pointer hover:shadow-md">
+                <input type="radio" name="option" value="connect-db" class="absolute inset-0 appearance-none focus:outline-none" checked />
+                <div class="flex-1">
+                    <span class="block text-sm font-medium text-gray-900"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M21 9.5V12.5C21 14.9853 16.9706 17 12 17C7.02944 17 3 14.9853 3 12.5V9.5C3 11.9853 7.02944 14 12 14C16.9706 14 21 11.9853 21 9.5ZM3 14.5C3 16.9853 7.02944 19 12 19C16.9706 19 21 16.9853 21 14.5V17.5C21 19.9853 16.9706 22 12 22C7.02944 22 3 19.9853 3 17.5V14.5ZM12 12C7.02944 12 3 9.98528 3 7.5C3 5.01472 7.02944 3 12 3C16.9706 3 21 5.01472 21 7.5C21 9.98528 16.9706 12 12 12Z"></path></svg>Connect to Database</span>
+                    <span class="mt-1 block text-sm text-gray-500">Connect and manage your hospital database</span>
+                </div>
+            </label>
+
+            <!-- Start with Template -->
+            <label id="label-template" class="relative flex rounded-lg border border-gray-300 bg-white p-4 cursor-pointer hover:shadow-md">
+                <input type="radio" name="option" value="template" class="absolute inset-0 appearance-none focus:outline-none" />
+                <div class="flex-1">
+                    <span class="block text-sm font-medium text-gray-900"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M2 13H8V21H2V13ZM16 8H22V21H16V8ZM9 3H15V21H9V3ZM4 15V19H6V15H4ZM11 5V19H13V5H11ZM18 10V19H20V10H18Z"></path></svg>Start with Template</span>
+                    <span class="mt-1 block text-sm text-gray-500">Use a prebuilt template to calculate hospital health costs</span>
+                </div>
+            </label>
+        </div>
+    </fieldset>
+
+    <button type="submit" id="continueBtn" class="mt-8 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-[8px] hover:bg-indigo-700 transition-colors duration-300">
+        Let's Go!
+    </button>
+</form>
+
+
+<script>
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+</script>
+
+
+<script>
+    // Highlight selected label
+    const options = document.querySelectorAll('input[name="option"]');
+    const labels = {
+        'connect-db': document.getElementById('label-db'),
+        'template': document.getElementById('label-template')
+    };
+    options.forEach(input => {
+        input.addEventListener('change', () => {
+            // Reset all borders
+            Object.values(labels).forEach(label => label.classList.remove('border-indigo-600', 'shadow-lg'));
+            // Add border + shadow to selected
+            labels[input.value].classList.add('border-indigo-600', 'shadow-lg');
+        });
+    });
+
+    // Trigger default selection on page load
+    const checkedInput = document.querySelector('input[name="option"]:checked');
+    if (checkedInput) {
+        labels[checkedInput.value].classList.add('border-indigo-600', 'shadow-lg');
+    }
+</script>
+    <script>
+        // Loading Screen
+        const progress = document.getElementById('progress');
+        const loadingScreen = document.getElementById('loading-screen');
+        const contentForm = document.getElementById('optionForm');
+        let width = 0;
+        const interval = setInterval(() => {
+            width += 1;
+            progress.style.width = width + '%';
+            if (width >= 100) {
+                clearInterval(interval);
+                loadingScreen.classList.add('hidden');
+                contentForm.classList.remove('hidden');
+            }
+        }, 30);
+    </script>
+      <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
